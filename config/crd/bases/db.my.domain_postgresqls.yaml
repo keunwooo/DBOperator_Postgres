@@ -1,0 +1,549 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: postgresqls.db.my.domain
+spec:
+  group: db.my.domain
+  names:
+    kind: PostgreSQL
+    listKind: PostgreSQLList
+    plural: postgresqls
+    singular: postgresql
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: PostgreSQL is the Schema for the postgresqls API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: PostgreSQLSpec defines the desired state of PostgreSQL
+            properties:
+              replicas:
+                description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+                  Important: Run "make" to regenerate code after modifying this file'
+                format: int32
+                minimum: 0
+                type: integer
+              storage:
+                description: the volume size for each instance
+                properties:
+                  pvcspec:
+                    description: PersistentVolumeClaimSpec describes the common attributes
+                      of storage devices and allows a Source for provider-specific
+                      attributes
+                    properties:
+                      accessModes:
+                        description: 'AccessModes contains the desired access modes
+                          the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1'
+                        items:
+                          type: string
+                        type: array
+                      dataSource:
+                        description: 'This field can be used to specify either: *
+                          An existing VolumeSnapshot object (snapshot.storage.k8s.io/VolumeSnapshot)
+                          * An existing PVC (PersistentVolumeClaim) If the provisioner
+                          or an external controller can support the specified data
+                          source, it will create a new volume based on the contents
+                          of the specified data source. If the AnyVolumeDataSource
+                          feature gate is enabled, this field will always have the
+                          same contents as the DataSourceRef field.'
+                        properties:
+                          apiGroup:
+                            description: APIGroup is the group for the resource being
+                              referenced. If APIGroup is not specified, the specified
+                              Kind must be in the core API group. For any other third-party
+                              types, APIGroup is required.
+                            type: string
+                          kind:
+                            description: Kind is the type of resource being referenced
+                            type: string
+                          name:
+                            description: Name is the name of resource being referenced
+                            type: string
+                        required:
+                        - kind
+                        - name
+                        type: object
+                      dataSourceRef:
+                        description: 'Specifies the object from which to populate
+                          the volume with data, if a non-empty volume is desired.
+                          This may be any local object from a non-empty API group
+                          (non core object) or a PersistentVolumeClaim object. When
+                          this field is specified, volume binding will only succeed
+                          if the type of the specified object matches some installed
+                          volume populator or dynamic provisioner. This field will
+                          replace the functionality of the DataSource field and as
+                          such if both fields are non-empty, they must have the same
+                          value. For backwards compatibility, both fields (DataSource
+                          and DataSourceRef) will be set to the same value automatically
+                          if one of them is empty and the other is non-empty. There
+                          are two important differences between DataSource and DataSourceRef:
+                          * While DataSource only allows two specific types of objects,
+                          DataSourceRef allows any non-core object, as well as PersistentVolumeClaim
+                          objects. * While DataSource ignores disallowed values (dropping
+                          them), DataSourceRef preserves all values, and generates
+                          an error if a disallowed value is specified. (Alpha) Using
+                          this field requires the AnyVolumeDataSource feature gate
+                          to be enabled.'
+                        properties:
+                          apiGroup:
+                            description: APIGroup is the group for the resource being
+                              referenced. If APIGroup is not specified, the specified
+                              Kind must be in the core API group. For any other third-party
+                              types, APIGroup is required.
+                            type: string
+                          kind:
+                            description: Kind is the type of resource being referenced
+                            type: string
+                          name:
+                            description: Name is the name of resource being referenced
+                            type: string
+                        required:
+                        - kind
+                        - name
+                        type: object
+                      resources:
+                        description: 'Resources represents the minimum resources the
+                          volume should have. If RecoverVolumeExpansionFailure feature
+                          is enabled users are allowed to specify resource requirements
+                          that are lower than previous value but must still be higher
+                          than capacity recorded in the status field of the claim.
+                          More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
+                        properties:
+                          limits:
+                            additionalProperties:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: 'Limits describes the maximum amount of compute
+                              resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                            type: object
+                          requests:
+                            additionalProperties:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: 'Requests describes the minimum amount of
+                              compute resources required. If Requests is omitted for
+                              a container, it defaults to Limits if that is explicitly
+                              specified, otherwise to an implementation-defined value.
+                              More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
+                            type: object
+                        type: object
+                      selector:
+                        description: A label query over volumes to consider for binding.
+                        properties:
+                          matchExpressions:
+                            description: matchExpressions is a list of label selector
+                              requirements. The requirements are ANDed.
+                            items:
+                              description: A label selector requirement is a selector
+                                that contains values, a key, and an operator that
+                                relates the key and values.
+                              properties:
+                                key:
+                                  description: key is the label key that the selector
+                                    applies to.
+                                  type: string
+                                operator:
+                                  description: operator represents a key's relationship
+                                    to a set of values. Valid operators are In, NotIn,
+                                    Exists and DoesNotExist.
+                                  type: string
+                                values:
+                                  description: values is an array of string values.
+                                    If the operator is In or NotIn, the values array
+                                    must be non-empty. If the operator is Exists or
+                                    DoesNotExist, the values array must be empty.
+                                    This array is replaced during a strategic merge
+                                    patch.
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - key
+                              - operator
+                              type: object
+                            type: array
+                          matchLabels:
+                            additionalProperties:
+                              type: string
+                            description: matchLabels is a map of {key,value} pairs.
+                              A single {key,value} in the matchLabels map is equivalent
+                              to an element of matchExpressions, whose key field is
+                              "key", the operator is "In", and the values array contains
+                              only "value". The requirements are ANDed.
+                            type: object
+                        type: object
+                      storageClassName:
+                        description: 'Name of the StorageClass required by the claim.
+                          More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1'
+                        type: string
+                      volumeMode:
+                        description: volumeMode defines what type of volume is required
+                          by the claim. Value of Filesystem is implied when not included
+                          in claim spec.
+                        type: string
+                      volumeName:
+                        description: VolumeName is the binding reference to the PersistentVolume
+                          backing this claim.
+                        type: string
+                    type: object
+                type: object
+              version:
+                type: string
+            required:
+            - version
+            type: object
+          status:
+            description: PostgreSQLStatus defines the observed state of PostgreSQL
+            properties:
+              persistentVolumeClaimStatus:
+                description: PersistentVolumeClaimStatus is the current status of
+                  a persistent volume claim.
+                properties:
+                  accessModes:
+                    description: 'AccessModes contains the actual access modes the
+                      volume backing the PVC has. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1'
+                    items:
+                      type: string
+                    type: array
+                  allocatedResources:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: The storage resource within AllocatedResources tracks
+                      the capacity allocated to a PVC. It may be larger than the actual
+                      capacity when a volume expansion operation is requested. For
+                      storage quota, the larger value from allocatedResources and
+                      PVC.spec.resources is used. If allocatedResources is not set,
+                      PVC.spec.resources alone is used for quota calculation. If a
+                      volume expansion capacity request is lowered, allocatedResources
+                      is only lowered if there are no expansion operations in progress
+                      and if the actual volume capacity is equal or lower than the
+                      requested capacity. This is an alpha field and requires enabling
+                      RecoverVolumeExpansionFailure feature.
+                    type: object
+                  capacity:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: Represents the actual resources of the underlying
+                      volume.
+                    type: object
+                  conditions:
+                    description: Current Condition of persistent volume claim. If
+                      underlying persistent volume is being resized then the Condition
+                      will be set to 'ResizeStarted'.
+                    items:
+                      description: PersistentVolumeClaimCondition contails details
+                        about state of pvc
+                      properties:
+                        lastProbeTime:
+                          description: Last time we probed the condition.
+                          format: date-time
+                          type: string
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one
+                            status to another.
+                          format: date-time
+                          type: string
+                        message:
+                          description: Human-readable message indicating details about
+                            last transition.
+                          type: string
+                        reason:
+                          description: Unique, this should be a short, machine understandable
+                            string that gives the reason for condition's last transition.
+                            If it reports "ResizeStarted" that means the underlying
+                            persistent volume is being resized.
+                          type: string
+                        status:
+                          type: string
+                        type:
+                          description: PersistentVolumeClaimConditionType is a valid
+                            value of PersistentVolumeClaimCondition.Type
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  phase:
+                    description: Phase represents the current phase of PersistentVolumeClaim.
+                    type: string
+                  resizeStatus:
+                    description: ResizeStatus stores status of resize operation. ResizeStatus
+                      is not set by default but when expansion is complete resizeStatus
+                      is set to empty string by resize controller or kubelet. This
+                      is an alpha field and requires enabling RecoverVolumeExpansionFailure
+                      feature.
+                    type: string
+                type: object
+              serviceStatus:
+                description: the status of the Service managed by PostgreSQL
+                properties:
+                  conditions:
+                    description: Current service state
+                    items:
+                      description: "Condition contains details for one aspect of the
+                        current state of this API Resource. --- This struct is intended
+                        for direct use as an array at the field path .status.conditions.
+                        \ For example, type FooStatus struct{ // Represents the observations
+                        of a foo's current state. // Known .status.conditions.type
+                        are: \"Available\", \"Progressing\", and \"Degraded\" // +patchMergeKey=type
+                        // +patchStrategy=merge // +listType=map // +listMapKey=type
+                        Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                        patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`
+                        \n // other fields }"
+                      properties:
+                        lastTransitionTime:
+                          description: lastTransitionTime is the last time the condition
+                            transitioned from one status to another. This should be
+                            when the underlying condition changed.  If that is not
+                            known, then using the time when the API field changed
+                            is acceptable.
+                          format: date-time
+                          type: string
+                        message:
+                          description: message is a human readable message indicating
+                            details about the transition. This may be an empty string.
+                          maxLength: 32768
+                          type: string
+                        observedGeneration:
+                          description: observedGeneration represents the .metadata.generation
+                            that the condition was set based upon. For instance, if
+                            .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration
+                            is 9, the condition is out of date with respect to the
+                            current state of the instance.
+                          format: int64
+                          minimum: 0
+                          type: integer
+                        reason:
+                          description: reason contains a programmatic identifier indicating
+                            the reason for the condition's last transition. Producers
+                            of specific condition types may define expected values
+                            and meanings for this field, and whether the values are
+                            considered a guaranteed API. The value should be a CamelCase
+                            string. This field may not be empty.
+                          maxLength: 1024
+                          minLength: 1
+                          pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                          type: string
+                        status:
+                          description: status of the condition, one of True, False,
+                            Unknown.
+                          enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                          type: string
+                        type:
+                          description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                            --- Many .condition.type values are consistent across
+                            resources like Available, but because arbitrary conditions
+                            can be useful (see .node.status.conditions), the ability
+                            to deconflict is important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                          maxLength: 316
+                          pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                          type: string
+                      required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                      type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - type
+                    x-kubernetes-list-type: map
+                  loadBalancer:
+                    description: LoadBalancer contains the current status of the load-balancer,
+                      if one is present.
+                    properties:
+                      ingress:
+                        description: Ingress is a list containing ingress points for
+                          the load-balancer. Traffic intended for the service should
+                          be sent to these ingress points.
+                        items:
+                          description: 'LoadBalancerIngress represents the status
+                            of a load-balancer ingress point: traffic intended for
+                            the service should be sent to an ingress point.'
+                          properties:
+                            hostname:
+                              description: Hostname is set for load-balancer ingress
+                                points that are DNS based (typically AWS load-balancers)
+                              type: string
+                            ip:
+                              description: IP is set for load-balancer ingress points
+                                that are IP based (typically GCE or OpenStack load-balancers)
+                              type: string
+                            ports:
+                              description: Ports is a list of records of service ports
+                                If used, every port defined in the service should
+                                have an entry in it
+                              items:
+                                properties:
+                                  error:
+                                    description: 'Error is to record the problem with
+                                      the service port The format of the error shall
+                                      comply with the following rules: - built-in
+                                      error values shall be specified in this file
+                                      and those shall use CamelCase names - cloud
+                                      provider specific error values must have names
+                                      that comply with the format foo.example.com/CamelCase.
+                                      --- The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)'
+                                    maxLength: 316
+                                    pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                                    type: string
+                                  port:
+                                    description: Port is the port number of the service
+                                      port of which status is recorded here
+                                    format: int32
+                                    type: integer
+                                  protocol:
+                                    default: TCP
+                                    description: 'Protocol is the protocol of the
+                                      service port of which status is recorded here
+                                      The supported values are: "TCP", "UDP", "SCTP"'
+                                    type: string
+                                required:
+                                - port
+                                - protocol
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
+                          type: object
+                        type: array
+                    type: object
+                type: object
+              statefulSetStatus:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                  of cluster Important: Run "make" to regenerate code after modifying
+                  this file'
+                properties:
+                  availableReplicas:
+                    description: Total number of available pods (ready for at least
+                      minReadySeconds) targeted by this statefulset. This is a beta
+                      field and enabled/disabled by StatefulSetMinReadySeconds feature
+                      gate.
+                    format: int32
+                    type: integer
+                  collisionCount:
+                    description: collisionCount is the count of hash collisions for
+                      the StatefulSet. The StatefulSet controller uses this field
+                      as a collision avoidance mechanism when it needs to create the
+                      name for the newest ControllerRevision.
+                    format: int32
+                    type: integer
+                  conditions:
+                    description: Represents the latest available observations of a
+                      statefulset's current state.
+                    items:
+                      description: StatefulSetCondition describes the state of a statefulset
+                        at a certain point.
+                      properties:
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one
+                            status to another.
+                          format: date-time
+                          type: string
+                        message:
+                          description: A human readable message indicating details
+                            about the transition.
+                          type: string
+                        reason:
+                          description: The reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: Status of the condition, one of True, False,
+                            Unknown.
+                          type: string
+                        type:
+                          description: Type of statefulset condition.
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  currentReplicas:
+                    description: currentReplicas is the number of Pods created by
+                      the StatefulSet controller from the StatefulSet version indicated
+                      by currentRevision.
+                    format: int32
+                    type: integer
+                  currentRevision:
+                    description: currentRevision, if not empty, indicates the version
+                      of the StatefulSet used to generate Pods in the sequence [0,currentReplicas).
+                    type: string
+                  observedGeneration:
+                    description: observedGeneration is the most recent generation
+                      observed for this StatefulSet. It corresponds to the StatefulSet's
+                      generation, which is updated on mutation by the API Server.
+                    format: int64
+                    type: integer
+                  readyReplicas:
+                    description: readyReplicas is the number of pods created for this
+                      StatefulSet with a Ready Condition.
+                    format: int32
+                    type: integer
+                  replicas:
+                    description: replicas is the number of Pods created by the StatefulSet
+                      controller.
+                    format: int32
+                    type: integer
+                  updateRevision:
+                    description: updateRevision, if not empty, indicates the version
+                      of the StatefulSet used to generate Pods in the sequence [replicas-updatedReplicas,replicas)
+                    type: string
+                  updatedReplicas:
+                    description: updatedReplicas is the number of Pods created by
+                      the StatefulSet controller from the StatefulSet version indicated
+                      by updateRevision.
+                    format: int32
+                    type: integer
+                required:
+                - availableReplicas
+                - replicas
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

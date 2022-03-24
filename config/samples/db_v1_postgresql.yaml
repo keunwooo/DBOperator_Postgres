@@ -1,0 +1,16 @@
+apiVersion: db.my.domain/v1
+kind: PostgreSQL
+metadata:
+  name: postgresql-sample
+  labels:
+    app: postgres
+spec:
+  # TODO(user): Add fields here
+  replicas: 1
+  version: postgres:13.3
+  storage:
+   pvcspec:
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: rook-ceph-block
